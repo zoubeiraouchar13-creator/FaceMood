@@ -1,6 +1,6 @@
-# 🎭 FaceMood — Détection et Classification des Émotions Faciales en Temps Réel
+# FaceMood — Real-Time Facial Emotion Detection and Classification
 
-Pipeline de vision par ordinateur en cascade combinant **YOLOv8** (détection de personnes) et un classificateur d'émotions **YOLOv8n-cls** fine-tuné sur **FER-2013**, optimisé pour l'inférence temps réel sur CPU via **OpenVINO**.
+A cascaded computer vision pipeline combining **YOLOv8** (person detection) and a **YOLOv8n-cls** emotion classifier fine-tuned on **FER-2013**, optimized for real-time CPU inference via **OpenVINO**.
 
 ![Python](https://img.shields.io/badge/Python-3.12-blue)
 ![YOLOv8](https://img.shields.io/badge/Ultralytics-YOLOv8-purple)
@@ -11,41 +11,39 @@ Pipeline de vision par ordinateur en cascade combinant **YOLOv8** (détection de
 
 ## 📋 Description
 
-**FaceMood** analyse un flux vidéo et affiche, en temps réel, l'émotion dominante de chaque personne détectée à l'écran (colère, dégoût, peur, joie, neutre, tristesse, surprise).
+**FaceMood** analyzes a video feed and displays, in real time, the dominant emotion of each person detected on screen (anger, disgust, fear, joy, neutral, sadness, surprise).
 
-Le système repose sur une **architecture en cascade à deux étages** :
+The system is based on a **two-stage cascaded architecture**:
+1. A generic **YOLOv8n** model (pre-trained on COCO) detects the people present in each image.
+2. A **YOLOv8n-cls** model, trained via transfer learning on **FER-2013**, classifies the facial expression of each detected region.
 
-1. Un modèle **YOLOv8n** générique (pré-entraîné sur COCO) détecte les personnes présentes dans chaque image.
-2. Un modèle **YOLOv8n-cls**, entraîné par apprentissage par transfert sur **FER-2013**, classe l'expression faciale de chaque région détectée.
-
-Le classificateur est ensuite exporté au format **OpenVINO (FP16)** afin de garantir une exécution fluide sur une machine **sans GPU dédié**.
-
-```
-Vidéo ──► Détection personnes (YOLOv8n) ──► Crop ROI ──► Classification émotion (OpenVINO) ──► Affichage temps réel
+The classifier is then exported in **OpenVINO (FP16)** format to ensure smooth execution on a machine **without a dedicated GPU**.
+```bash
+Video ──► Person detection (YOLOv8n) ──► ROI cropping ──► Emotion classification (OpenVINO) ──► Real-time display
 ```
 
-## 🎯 Fonctionnalités
+## Features
 
-- 📥 Téléchargement et préparation automatique du dataset **FER-2013** (via Kaggle)
-- 🧠 Entraînement d'un classificateur d'émotions par transfer learning (YOLOv8n-cls)
-- ⚡ Export du modèle vers **OpenVINO** en précision **FP16** pour l'inférence CPU
-- 🎥 Pipeline d'analyse vidéo temps réel avec OpenCV
-- 🇫🇷 Traduction automatique des émotions en français
-- 📦 Affichage des boîtes englobantes, du libellé d'émotion et du taux de confiance
+- Automatic download and preparation of the **FER-2013** dataset (via Kaggle)
+- Emotion classifier training using transfer learning (YOLOv8n-cls)
+- Model export to **OpenVINO** in **FP16** precision for CPU inference
+- Real-time video analysis pipeline using OpenCV
+- 🇫🇷 Automatic translation of emotion labels into French
+- Display of bounding boxes, emotion labels, and confidence scores
 
-## 📁 Structure du projet
+## Project Structure
 
-```
+```bash
 FaceMood/
-├── train_yolo.py     # Téléchargement FER-2013 + entraînement YOLOv8n-cls
-├── export_yolo.py     # Export du modèle entraîné vers OpenVINO (FP16)
-├── main_video.py       # Pipeline d'inférence vidéo temps réel
-├── requirements.txt   # Dépendances Python
-├── video_1.mp4        # Vidéo d'entrée (à fournir par l'utilisateur)
-├── fer2013/           # Dataset (généré automatiquement à l'entraînement)
+├── train_yolo.py     # FER-2013 download + YOLOv8n-cls training
+├── export_yolo.py     # Exporting the trained model to OpenVINO (FP16)
+├── main_video.py       # Real-time video inference pipeline
+├── requirements.txt   # Python dependencies
+├── video_1.mp4        # Intro video (to be provided by the user)
+├── fer2013/           # Dataset (automatically generated during training)
 └── runs/classify/train/weights/
-    ├── best.pt                 # Poids PyTorch entraînés
-    └── best_openvino_model/    # Modèle exporté (OpenVINO, FP16)
+    ├── best.pt                 # Pre-trained PyTorch weights
+    └── best_openvino_model/    # Exported model (OpenVINO, FP16)
 ```
 
 ## ⚙️ Installation
@@ -53,42 +51,40 @@ FaceMood/
 ```bash
 git clone https://github.com/<votre-nom-utilisateur>/FaceMood.git
 cd FaceMood
-python -m venv venv
-source venv/bin/activate      # Windows : venv\Scripts\activate
+python -m venv .venv
+source venv/bin/activate      # Windows : .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-> ⚠️ Un compte **Kaggle** avec un token API configuré (`~/.kaggle/kaggle.json` ou variables d'environnement `KAGGLE_USERNAME` / `KAGGLE_KEY`) est nécessaire pour le téléchargement automatique du dataset FER-2013.
+## Usage
 
-## 🚀 Utilisation
+The three steps are executed in the following order:
 
-Les trois étapes s'exécutent dans l'ordre suivant :
-
-### 1. Entraîner le classificateur d'émotions
+### 1. Train the emotion classifier
 
 ```bash
 python train_yolo.py
 ```
 
-Télécharge FER-2013 si nécessaire, puis entraîne YOLOv8n-cls (15 épochs, CPU) et sauvegarde les poids dans `runs/classify/train/weights/best.pt`.
+Download FER-2013 if necessary, then train YOLOv8n-cls (15 epochs, CPU) and save the weights to `runs/classify/train/weights/best.pt`.
 
-### 2. Exporter le modèle vers OpenVINO
+### 2. Export the model to OpenVINO
 
 ```bash
 python export_yolo.py
 ```
 
-Convertit `best.pt` en modèle optimisé `best_openvino_model/` (précision FP16, adapté au CPU).
+Converts `best.pt` into an optimized model `best_openvino_model/` (FP16 precision, optimized for CPU).
 
-### 3. Lancer l'analyse vidéo temps réel
+### 3. Start real-time video analysis
 
 ```bash
 python main_video.py
 ```
 
-Placez votre vidéo sous le nom `video_1.mp4` à la racine du projet (ou modifiez `video_path` dans le script). Appuyez sur **`q`** pour quitter la fenêtre d'affichage.
+Place your video, named `video_1.mp4`, at the project root (or modify `video_path` in the script). Press **`q`** to close the display window.
 
-## 🧠 Modèle & Dataset
+## Modèle & Dataset
 
 | Élément | Détail |
 |---|---|
@@ -98,19 +94,6 @@ Placez votre vidéo sous le nom `video_1.mp4` à la racine du projet (ou modifie
 | Format d'inférence | OpenVINO IR, précision FP16 |
 | Device d'entraînement | CPU |
 
-## ⚠️ Limites connues
-
-- Le recadrage utilisé pour la classification provient d'un détecteur de **personnes**, pas d'un détecteur de **visages** dédié.
-- FER-2013 est déséquilibré (classe *dégoût* sous-représentée), ce qui peut affecter sa reconnaissance.
-- Aucun lissage temporel entre images : l'émotion affichée peut varier d'une frame à l'autre.
-- Traite actuellement un fichier vidéo enregistré (l'usage webcam en direct nécessite de remplacer le chemin vidéo par l'indice de la caméra, ex. `cv2.VideoCapture(0)`).
-
-## 🔭 Perspectives
-
-- Intégrer un détecteur de visages dédié
-- Ajouter un tracking + lissage temporel des prédictions
-- Support de la webcam en direct
-- Augmentation de données pour les classes sous-représentées
 
 ## 🛠️ Technologies utilisées
 
@@ -118,11 +101,3 @@ Placez votre vidéo sous le nom `video_1.mp4` à la racine du projet (ou modifie
 - [OpenCV](https://opencv.org/)
 - [OpenVINO](https://github.com/openvinotoolkit/openvino)
 - [KaggleHub](https://github.com/Kaggle/kagglehub)
-
-## 👤 Auteur
-
-**Zoubeir Aouchar**
-
-## 📄 Licence
-
-Ce projet est distribué sous licence MIT — voir le fichier [LICENSE](LICENSE) pour plus de détails.
