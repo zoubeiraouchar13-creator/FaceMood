@@ -1,6 +1,6 @@
-# FaceMood — Real-Time Facial Emotion Detection and Classification
+# 🎭 FaceMood — Détection et Classification des Émotions Faciales en Temps Réel
 
-Cascaded computer vision pipeline combining **YOLOv8** (person detection) and a **YOLOv8n-cls** emotion classifier fine-tuned on **FER-2013**, optimized for real-time CPU inference via **OpenVINO**.
+Pipeline de vision par ordinateur en cascade combinant **YOLOv8** (détection de personnes) et un classificateur d'émotions **YOLOv8n-cls** fine-tuné sur **FER-2013**, optimisé pour l'inférence temps réel sur CPU via **OpenVINO**.
 
 ![Python](https://img.shields.io/badge/Python-3.12-blue)
 ![YOLOv8](https://img.shields.io/badge/Ultralytics-YOLOv8-purple)
@@ -11,32 +11,33 @@ Cascaded computer vision pipeline combining **YOLOv8** (person detection) and a 
 
 ## 📋 Description
 
-**FaceMood** analyzes a video feed and displays, in real time, the dominant emotion of each person detected on screen (anger, disgust, fear, joy, neutral, sadness, surprise).
+**FaceMood** analyse un flux vidéo et affiche, en temps réel, l'émotion dominante de chaque personne détectée à l'écran (colère, dégoût, peur, joie, neutre, tristesse, surprise).
 
-The system relies on a **two-stage cascaded architecture**:
+Le système repose sur une **architecture en cascade à deux étages** :
 
-1. A generic **YOLOv8n** model (pre-trained on COCO) detects the people present in each image.
-2. A **YOLOv8n-cls** model, trained via transfer learning on **FER-2013**, classifies the facial expression of each detected region.
+1. Un modèle **YOLOv8n** générique (pré-entraîné sur COCO) détecte les personnes présentes dans chaque image.
+2. Un modèle **YOLOv8n-cls**, entraîné par apprentissage par transfert sur **FER-2013**, classe l'expression faciale de chaque région détectée.
 
-The classifier is then exported to **OpenVINO (FP16)** format to ensure smooth execution on a machine **without a dedicated GPU**.
+Le classificateur est ensuite exporté au format **OpenVINO (FP16)** afin de garantir une exécution fluide sur une machine **sans GPU dédié**.
 
 ```
-Video ──► Person detection (YOLOv8n) ──► ROI cropping ──► Emotion classification (OpenVINO) ──► Real-time display```
+Vidéo ──► Détection personnes (YOLOv8n) ──► Crop ROI ──► Classification émotion (OpenVINO) ──► Affichage temps réel
+```
 
-## 🎯 Features
+## 🎯 Fonctionnalités
 
-- 📥 Automatic download and preparation of the **FER-2013** dataset (via Kaggle)
-- 🧠 Emotion classifier training using transfer learning (YOLOv8n-cls)
-- ⚡ Model export to **OpenVINO** in **FP16** precision for CPU inference
-- 🎥 Real-time video analysis pipeline using OpenCV
-- 🇫🇷 Automatic translation of emotion labels into French
-- 📦 Display of bounding boxes, emotion labels, and confidence scores
+- 📥 Téléchargement et préparation automatique du dataset **FER-2013** (via Kaggle)
+- 🧠 Entraînement d'un classificateur d'émotions par transfer learning (YOLOv8n-cls)
+- ⚡ Export du modèle vers **OpenVINO** en précision **FP16** pour l'inférence CPU
+- 🎥 Pipeline d'analyse vidéo temps réel avec OpenCV
+- 🇫🇷 Traduction automatique des émotions en français
+- 📦 Affichage des boîtes englobantes, du libellé d'émotion et du taux de confiance
 
-## 📁 Project Structure
+## 📁 Structure du projet
 
 ```
 FaceMood/
-├── train_yolo.py     # FER-2013 download + YOLOv8n-cls training
+├── train_yolo.py     # Téléchargement FER-2013 + entraînement YOLOv8n-cls
 ├── export_yolo.py     # Export du modèle entraîné vers OpenVINO (FP16)
 ├── main_video.py       # Pipeline d'inférence vidéo temps réel
 ├── requirements.txt   # Dépendances Python
