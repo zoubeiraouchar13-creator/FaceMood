@@ -5,7 +5,7 @@ A cascaded computer vision pipeline combining **YOLOv8** (person detection) and 
 ![Python](https://img.shields.io/badge/Python-3.12-blue)
 ![YOLOv8](https://img.shields.io/badge/Ultralytics-YOLOv8-purple)
 ![OpenVINO](https://img.shields.io/badge/Inference-OpenVINO%20FP16-teal)
-![License](https://img.shields.io/badge/License-MIT-green)
+![License](https://img.shields.io/badge/License-CC%20BY%20NC-blue)
 
 ---
 
