@@ -60,9 +60,20 @@ pip install -r requirements.txt
 
 ## Usage
 
-The three steps are executed in the following order:
+The five steps are executed in the following order:
 
-### 1. Train the emotion classifier
+### 1. Verification of dataset content
+
+```bash
+python dataset_verification.py
+```
+### 2. Balanced the dataset based on the median.
+
+```bash
+python balance_dataset.py
+```
+
+### 3. Train the emotion classifier
 
 ```bash
 python train_yolo.py
@@ -70,7 +81,7 @@ python train_yolo.py
 
 Download FER-2013 if necessary, then train YOLOv8s-cls (15 epochs, CPU) and save the weights to `runs/classify/train/weights/best.pt`.
 
-### 2. Export the model to OpenVINO
+### 4. Export the model to OpenVINO
 
 ```bash
 python export_yolo.py
@@ -78,7 +89,7 @@ python export_yolo.py
 
 Converts `best.pt` into an optimized model `best_openvino_model/` (FP16 precision, optimized for CPU).
 
-### 3. Start real-time video analysis
+### 5. Start real-time video analysis
 
 ```bash
 python main_video.py
